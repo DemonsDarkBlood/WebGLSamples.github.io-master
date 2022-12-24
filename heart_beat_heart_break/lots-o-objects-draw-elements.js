@@ -182,9 +182,9 @@ function createApp(gl, settings) {
 
     if (settings.update) {
       // Make the camera rotate around the scene.
-      eyePosition[0] = Math.sin(clock * g_eyeSpeed) * g_eyeRadius;
+      eyePosition[0] = Math.sin(1/*clock*/ * g_eyeSpeed) * g_eyeRadius;
       eyePosition[1] = g_eyeHeight;
-      eyePosition[2] = Math.cos(clock * g_eyeSpeed) * g_eyeRadius;
+      eyePosition[2] = Math.cos(1/*clock*/ * g_eyeSpeed) * g_eyeRadius;
 
       // --Update Instance Positions---------------------------------------
       const advance = elapsedTime / 2;
