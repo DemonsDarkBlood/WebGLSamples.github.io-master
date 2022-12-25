@@ -11,10 +11,10 @@ function createApp(gl, settings) {
 
   // Create Geometry.
   const bufferInfos = [
-    twgl.primitives.createSphereBufferInfo(gl, 0.4, 6, 6),
-    twgl.primitives.createCubeBufferInfo(gl, 0.8),
-    twgl.primitives.createTruncatedConeBufferInfo(
-      gl, 0.4, 0.0, 0.8, 12, 1, true, true),
+    //twgl.primitives.createSphereBufferInfo(gl, 0.4, 6, 6),
+    twgl.primitives.createCubeBufferInfo(gl, 0.02),
+    //twgl.primitives.createTruncatedConeBufferInfo(
+      //gl, 0.4, 0.0, 0.8, 12, 1, true, true),
   ];
 
   // Load textures
@@ -65,7 +65,7 @@ function createApp(gl, settings) {
                 1.0);
   }
   void main() {
-    vec4 diffuse = texture2D(diffuseSampler, v_texcoord) * colorMult;
+    vec4 diffuse = colorMult;
     vec3 normal = normalize(v_normal);
     vec3 surfaceToLight = normalize(v_surfaceToLight);
     vec3 surfaceToView = normalize(v_surfaceToView);
@@ -101,11 +101,13 @@ function createApp(gl, settings) {
   const instances = [];
 
   function addInstance() {
+    let blue_channel = r(0.8);
     instances.push({
       x: 0,
       y: 0,
       z: 0,
-      colorMult: new Float32Array([r(1), r(1), r(1), 0.8]),
+      //colorMult: new Float32Array([1.0, 1.0, 1.0, 0.8]),
+      colorMult: new Float32Array([0.8, r(1) * blue_channel, blue_channel, 0.8]),
       modelIndex: instances.length % bufferInfos.length,
       xRadius: pseudoRandom() * 5,
       yRadius: pseudoRandom() * 5,
@@ -212,7 +214,7 @@ function createApp(gl, settings) {
     // clear the screen.
     gl.colorMask(true, true, true, true);
     gl.depthMask(true);
-    gl.clearColor(1,1,1,0);
+    gl.clearColor(0,0,0,0);
     gl.clearDepth(1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
     gl.enable(gl.CULL_FACE);
