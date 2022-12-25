@@ -12,7 +12,7 @@ function createApp(gl, settings) {
   // Create Geometry.
   const bufferInfos = [
     //twgl.primitives.createSphereBufferInfo(gl, 0.4, 6, 6),
-    twgl.primitives.createCubeBufferInfo(gl, 0.02),
+    twgl.primitives.createCubeBufferInfo(gl, 0.04),
     //twgl.primitives.createTruncatedConeBufferInfo(
       //gl, 0.4, 0.0, 0.8, 12, 1, true, true),
   ];
@@ -110,8 +110,8 @@ function createApp(gl, settings) {
       //colorMult: new Float32Array([1.0, 1.0, 1.0, 0.8]),
       colorMult: new Float32Array([0.8, r(1) * blue_channel, blue_channel, 0.8]),
       modelIndex: instances.length % bufferInfos.length,
-      xRadius: pseudoRandom() * 5,
-      yRadius: pseudoRandom() * 5,
+      xRadius: pseudoRandom(),
+      yRadius: pseudoRandom(),
       zRadius: pseudoRandom() * 5,
       xClockSpeed: (pseudoRandom() + 0.5),
       yClockSpeed: (pseudoRandom() + 0.5),
@@ -259,9 +259,31 @@ function createApp(gl, settings) {
         //instance.x = Math.sin(instance.xClock) * instance.xRadius;
         //instance.y = Math.sin(instance.yClock) * instance.yRadius;
         //instance.z = Math.cos(instance.zClock) * instance.zRadius;
-        instance.x = 16 * sin_t * sin_t * sin_t * 0.2 * (instance.index % 5 * 0.05 + 0.75);
-        instance.y = (13 * Math.cos(param_t) - 5 * Math.cos(param_t * 2) - 2 * Math.cos(param_t * 3) - Math.cos(param_t * 4)) * 0.2 * (instance.index % 5 * 0.05 + 0.75);
-        instance.z = instance.index % 5 * 0.2;
+
+        var sin_clock = Math.sin(clock * 3);
+        if (sin_clock < 0.90)
+        {
+          sin_clock = 1.0;
+        }
+        else
+        {
+          sin_clock *= 1.2;
+        }
+
+        instance.x = (16 * sin_t * sin_t * sin_t * 0.2 * (instance.index % 5 * 0.05 + 0.8)) * sin_clock;
+        instance.y = ((13 * Math.cos(param_t) - 5 * Math.cos(param_t * 2) - 2 * Math.cos(param_t * 3) - Math.cos(param_t * 4)) * 0.2 * (instance.index % 5 * 0.05 + 0.8)) * sin_clock;
+        instance.z = ((instance.index % 2 == 0) ? -1 : 1) * (4 - instance.index % 5) * 0.2;
+
+        var translate_x = instance.xRadius * Math.cos(instance.yClock) * Math.sin(instance.xClock);
+        var translate_y = instance.xRadius * Math.sin(instance.yClock);
+        var translate_z = instance.xRadius * Math.cos(instance.yClock) * Math.cos(instance.xClock);
+//
+        if (translate_x * instance.x + translate_y * instance.y + translate_z* instance.z > 0)
+        {
+          instance.x += translate_x;
+          instance.y += translate_y;
+          instance.z += translate_z;
+        }
       }
     }
   }
