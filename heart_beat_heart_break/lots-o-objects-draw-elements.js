@@ -106,6 +106,7 @@ function createApp(gl, settings) {
       x: 0,
       y: 0,
       z: 0,
+      index: instances.length,
       //colorMult: new Float32Array([1.0, 1.0, 1.0, 0.8]),
       colorMult: new Float32Array([0.8, r(1) * blue_channel, blue_channel, 0.8]),
       modelIndex: instances.length % bufferInfos.length,
@@ -192,12 +193,18 @@ function createApp(gl, settings) {
       const advance = elapsedTime / 2;
       for (let ii = 0; ii < g_numObjects; ++ii) {
         var instance = instances[ii];
+        var normalized_index = instance.index % 365 / 365.0;
+        var param_t = normalized_index * 2.0 * Math.PI;
+        var sin_t = Math.sin(param_t);
         instance.xClock += advance * instance.xClockSpeed;
         instance.yClock += advance * instance.yClockSpeed;
         instance.zClock += advance * instance.zClockSpeed;
-        instance.x = Math.sin(instance.xClock) * instance.xRadius;
-        instance.y = Math.sin(instance.yClock) * instance.yRadius;
-        instance.z = Math.cos(instance.zClock) * instance.zRadius;
+        //instance.x = Math.sin(instance.xClock) * instance.xRadius;
+        //instance.y = Math.sin(instance.yClock) * instance.yRadius;
+        //instance.z = Math.cos(instance.zClock) * instance.zRadius;
+        instance.x = 16 * sin_t * sin_t * sin_t * 0.2 * (instance.index % 5 * 0.05 + 0.75);
+        instance.y = (13 * Math.cos(param_t) - 5 * Math.cos(param_t * 2) - 2 * Math.cos(param_t * 3) - Math.cos(param_t * 4)) * 0.2 * (instance.index % 5 * 0.05 + 0.75);
+        instance.z = instance.index % 5 * 0.2;
       }
     }
   }
