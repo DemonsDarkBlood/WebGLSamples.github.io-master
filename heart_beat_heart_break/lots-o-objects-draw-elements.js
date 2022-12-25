@@ -172,6 +172,60 @@ function createApp(gl, settings) {
     worldInverseTranspose: worldInverseTranspose
   };
 
+  var mouseDown = false;
+  var lastMouseX = null;
+  var lastMouseY = null;
+  var theta = 0;
+  var phi = 0;
+
+  this.handleMouseDown = function (event) {
+      mouseDown = true;
+      lastMouseX = event.clientX;
+      lastMouseY = event.clientY;
+  }
+
+  this.handleMouseUp = function (event) {
+      mouseDown = false;
+  }
+
+  this.handleMouseMove = function (event) {
+        if (!mouseDown) {
+            return;
+        }
+        var newX = event.clientX;
+        var newY = event.clientY;
+
+        var deltaX = newX - lastMouseX
+       
+        phi -= deltaX;
+        if (phi < -180)
+           		phi = 180 - (-180 - phi);
+
+        var deltaY = newY - lastMouseY;
+        theta += deltaY;
+        
+        //<!----------method 1: prevent to reach poles---->
+        if (theta < - 89)
+            theta = -89;
+        if (theta > 89)
+            theta = 89;
+        //<!----------method 2: add another constraint---->
+        //var pole_condition = 1;
+        //vec3 prev_up; <!--global-->
+        //up = (0, 0, 1);
+        //right = dir ^ up
+
+        lastMouseX = newX
+        lastMouseY = newY;
+    }
+    canvas.onmousedown = this.handleMouseDown;
+    canvas.onmousemove = this.handleMouseMove;
+    canvas.onmouseup = this.handleMouseUp;
+
+  function degToRad(degrees) {
+    return degrees * Math.PI / 180;
+  }
+
   let clock = 0.0;
   function update(elapsedTime, _numObjects) {
     clock += elapsedTime;
@@ -185,9 +239,12 @@ function createApp(gl, settings) {
 
     if (settings.update) {
       // Make the camera rotate around the scene.
-      eyePosition[0] = Math.sin(1/*clock*/ * g_eyeSpeed) * g_eyeRadius;
-      eyePosition[1] = g_eyeHeight;
-      eyePosition[2] = Math.cos(1/*clock*/ * g_eyeSpeed) * g_eyeRadius;
+
+      eyePosition[0] = g_eyeRadius* Math.cos(degToRad(theta)) * Math.sin(degToRad(phi));
+      eyePosition[1] = g_eyeHeight + g_eyeRadius* Math.sin(degToRad(theta));
+      eyePosition[2] = g_eyeRadius * Math.cos(degToRad(theta)) * Math.cos(degToRad(phi));
+      //eyePosition[0] = Math.sin(1/*clock*/ * g_eyeSpeed) * g_eyeRadius;
+      //eyePosition[2] = Math.cos(1/*clock*/ * g_eyeSpeed) * g_eyeRadius;
 
       // --Update Instance Positions---------------------------------------
       const advance = elapsedTime / 2;
